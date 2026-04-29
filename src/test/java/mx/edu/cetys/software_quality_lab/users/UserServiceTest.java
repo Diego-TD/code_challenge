@@ -1,5 +1,11 @@
 package mx.edu.cetys.software_quality_lab.users;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
 import mx.edu.cetys.software_quality_lab.users.exceptions.DuplicateUsernameException;
 import mx.edu.cetys.software_quality_lab.users.exceptions.InvalidUserDataException;
 import mx.edu.cetys.software_quality_lab.users.exceptions.UserNotFoundException;
@@ -8,14 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -34,24 +34,57 @@ public class UserServiceTest {
 
     @Test
     void shouldRegisterUserSuccessfully() {
-        // TODO: arrange — construir un UserRequest válido, mockear emailValidatorService.isValid para que regrese true,
-        //       mockear userRepository.existsByUsername para que regrese false,
-        //       mockear userRepository.save para que regrese un User con id
-        // TODO: act — llamar a userService.registerUser(request)
-        // TODO: assert — verificar id, username, status == "ACTIVE"; confirmar que save fue llamado una vez
+        // Arrange
+        UserController.UserRequest request = new UserController.UserRequest(
+            "juan4_dev",
+            "Juan",
+            "Pérez",
+            "6641234567",
+            "hola#gm4l.com",
+            25
+        );
+
+        when(emailValidatorService.isValid(anyString())).thenReturn(true);
+        when(userRepository.existsByUsername(request.username())).thenReturn(
+            false
+        );
+
+        User saved = new User(
+            "juan4_dev",
+            "Juan",
+            "Pérez",
+            "6641234567",
+            "hola#gm4l.com",
+            25
+        );
+
+        saved.setId(1L);
+        when(userRepository.save(any(User.class))).thenReturn(saved);
+
+        // Act
+        UserController.UserResponse response = userService.registerUser(
+            request
+        );
+
+        // Assert
+        Mockito.verify(userRepository, times(1)).save(any(User.class));
+        assertEquals(1, response.id());
+        assertEquals("juan4_dev", response.username());
+        assertEquals("ACTIVE", response.status());
     }
 
     @Test
     void shouldGetUserByIdSuccessfully() {
         // arrange — mockear userRepository.findById para que regrese un Optional<User> con datos
         Long userId = 1L;
-        User mockUser = new User("user1","Usu","Lopez","12345","email",8);
-        mockUser.setId(1L);
-        when(userRepository.findById(userId))
-                .thenReturn(Optional.of(mockUser));
+        User mockUser = new User("user1", "Usu", "Lopez", "12345", "email", 8);
+        mockUser.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
 
         // act — llamar a userService.getUserById(1L)
-        UserController.UserResponse userResponse = userService.getUserById(userId);
+        UserController.UserResponse userResponse = userService.getUserById(
+            userId
+        );
 
         // assert — verificar que los campos del response coincidan con el mock
         assertEquals(mockUser.getUsername(), userResponse.username());
@@ -73,111 +106,265 @@ public class UserServiceTest {
 
     @Test
     void shouldThrowWhenUsernameTooShort() {
-        // TODO: construir request con username de 4 caracteres
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request = new UserController.UserRequest(
+            "juan",
+            "Juan",
+            "Pérez",
+            "6641234567",
+            "hola#gm4l.com",
+            25
+        );
+
+        assertThrows(InvalidUserDataException.class, () ->
+            userService.registerUser(request)
+        );
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenUsernameTooLong() {
-        // TODO: construir request con username de 21 caracteres
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juanpacopedrodelamarr",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenUsernameHasInvalidChars() {
-        // TODO: username con mayúsculas o caracteres especiales, ej. "User@Name"
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "User@Name",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenUsernameStartsWithUnderscore() {
-        // TODO: username "_nombrevalido"
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "_nombrevalido",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenUsernameEndsWithUnderscore() {
-        // TODO: username "nombrevalido_"
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "nombrevalido_",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     // ─── Validaciones de Nombre ───────────────────────────────────────────────
 
     @Test
     void shouldThrowWhenFirstNameTooShort() {
-        // TODO: firstName de 1 carácter
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "J",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenFirstNameContainsNumbers() {
-        // TODO: firstName como "Juan5"
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan5",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenLastNameTooShort() {
-        // TODO: lastName de 1 carácter
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "P",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenLastNameContainsNumbers() {
-        // TODO: lastName como "Perez2"
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "Perez2",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     // ─── Validaciones de Age ─────────────────────────────────────────────────
 
     @Test
     void shouldThrowWhenAgeIsExactlyTwelve() {
-        // TODO: age = 12 — caso límite (boundary): debe ser MAYOR a 12, no mayor o igual
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        12);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenAgeIsBelowTwelve() {
-        // TODO: age = 5
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        5);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenAgeExceedsMaximum() {
-        // TODO: age = 121 — excede el máximo permitido de 120
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola#gm4l.com",
+                        122);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     // ─── Validaciones de Phone ───────────────────────────────────────────────
 
     @Test
     void shouldThrowWhenPhoneHasWrongLength() {
-        // TODO: phone con 9 u 11 dígitos
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "Pérez",
+                        "664123456",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void shouldThrowWhenPhoneContainsLetters() {
-        // TODO: phone como "123456789a"
-        // TODO: assertThrows InvalidUserDataException
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "Pérez",
+                        "664123456a",
+                        "hola#gm4l.com",
+                        25);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     // ─── Validación de Email ──────────────────────────────────────────────────
 
     @Test
     void shouldThrowWhenEmailIsInvalid() {
-        // TODO: mockear emailValidatorService.isValid(anyString()) para que regrese false
-        // TODO: assertThrows InvalidUserDataException
-        // TODO: verificar que emailValidatorService.isValid fue llamado (verify)
+        UserController.UserRequest request =
+                new UserController.UserRequest(
+                        "juan4_dev",
+                        "Juan",
+                        "Pérez",
+                        "6641234567",
+                        "hola@gm4l.com",
+                        25);
+
+        when(emailValidatorService.isValid(anyString())).thenReturn(false);
+
+        assertThrows(InvalidUserDataException.class, () -> userService.registerUser(request));
+        verify(emailValidatorService, times(1)).isValid(request.email());
+        verify(userRepository, never()).save(any(User.class));
+
     }
 
     // ─── Unicidad de Username ─────────────────────────────────────────────────
 
     @Test
     void shouldThrowWhenUsernameAlreadyExists() {
-        // TODO: mockear emailValidatorService.isValid para que regrese true
-        // TODO: mockear userRepository.existsByUsername para que regrese true
-        // TODO: assertThrows DuplicateUsernameException
-        // TODO: verificar que userRepository.save NUNCA fue llamado (verify never)
+        UserController.UserRequest request = new UserController.UserRequest(
+                "juan4_dev",
+                "Juan",
+                "Pérez",
+                "6641234567",
+                "hola#gm4l.com",
+                25
+        );
+
+
+        when(emailValidatorService.isValid(anyString())).thenReturn(true);
+        when(userRepository.existsByUsername(anyString())).thenReturn(true);
+
+        assertThrows(DuplicateUsernameException.class, () -> userService.registerUser(request));
+
+        verify(emailValidatorService, times(1)).isValid(request.email());
+        verify(userRepository, times(1)).existsByUsername(request.username());
+        verify(userRepository, never()).save(any(User.class));
     }
 
     // ─── Not found ───────────────────────────────────────────────────────────

@@ -1,5 +1,8 @@
 package mx.edu.cetys.software_quality_lab.users;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -74,46 +74,124 @@ public class UserControllerIntegrationTest {
 
     @Test
     void shouldReturn400WhenAgeIsExactlyTwelve() throws Exception {
-        // TODO: body con age = 12 (caso límite — debe ser mayor a 12)
-        // TODO: realizar POST /users
-        // TODO: andExpect status 400
+        String body = """
+            {
+                "username": "juan4_dev",
+                "firstName": "Juan",
+                "lastName": "Pérez",
+                "phone": "6641234567",
+                "email": "hola#gm4l.com",
+                "age": 12
+            }""";
+        mockMvc
+            .perform(
+                post("/users")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body)
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldReturn400WhenPhoneIsInvalid() throws Exception {
-        // TODO: body con phone = "123" (menos de 10 dígitos)
-        // TODO: realizar POST /users
-        // TODO: andExpect status 400
+        String body = """
+            {
+                "username": "juan4_dev",
+                "firstName": "Juan",
+                "lastName": "Pérez",
+                "phone": "123",
+                "email": "hola#gm4l.com",
+                "age": 25
+            }""";
+
+        mockMvc
+            .perform(
+                post("/users")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body)
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldReturn400WhenEmailIsInvalid() throws Exception {
-        // TODO: body con email en formato estándar "user@gmail.com" (no cumple las reglas del validador)
-        // TODO: realizar POST /users
-        // TODO: andExpect status 400
+        String body = """
+            {
+                "username": "juan4_dev",
+                "firstName": "Juan",
+                "lastName": "Pérez",
+                "phone": "6641234567",
+                "email": "user@gmail.com",
+                "age": 25
+            }""";
+
+        mockMvc
+            .perform(
+                post("/users")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body)
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldReturn409WhenUsernameIsDuplicated() throws Exception {
-        // TODO: guardar un usuario directamente via repository con el mismo username
-        // TODO: realizar segundo POST /users con el mismo username
-        // TODO: andExpect status 409
+        userRepository.save(new User(
+            "juan4_dev",
+            "Juan",
+            "Pérez",
+            "6641234567",
+            "hola#gm4l.com",
+            25
+        ));
+
+        String body = """
+            {
+                "username": "juan4_dev",
+                "firstName": "Juan",
+                "lastName": "Pérez",
+                "phone": "6641234567",
+                "email": "hola#gm4l.com",
+                "age": 25
+            }""";
+
+        mockMvc.perform(post("/users")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body)
+            ).andExpect(status().isConflict());
     }
 
     // ─── GET /users/{id} ─────────────────────────────────────────────────────
 
     @Test
     void shouldReturn200AndUserWhenFound() throws Exception {
-        // TODO: guardar un usuario via repository, obtener su id generado
-        // TODO: realizar GET /users/{id}
-        // TODO: andExpect status 200
-        // TODO: andExpect jsonPath campos coincidan con el usuario guardado
+        User user = userRepository.save(new User(
+                "juan4_dev",
+                "Juan",
+                "Pérez",
+                "6641234567",
+                "hola#gm4l.com",
+                25
+        ));
+
+        mockMvc.perform(get("/users/"+user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk())
+            .andExpect(jsonPath("$.response.user.username").value("juan4_dev"))
+            .andExpect(jsonPath("$.response.user.firstName").value("Juan"))
+            .andExpect(jsonPath("$.response.user.lastName").value("Pérez"))
+            .andExpect(jsonPath("$.response.user.phone").value("6641234567"))
+            .andExpect(jsonPath("$.response.user.email").value("hola#gm4l.com"))
+            .andExpect(jsonPath("$.response.user.age").value(25))
+            .andExpect(jsonPath("$.response.user.status").value("ACTIVE"));
+
     }
 
     @Test
     void shouldReturn404WhenUserNotFound() throws Exception {
-        // TODO: realizar GET /users/9999 (id inexistente)
-        // TODO: andExpect status 404
+        mockMvc.perform(get("/users/9999")
+            .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound());
     }
 
     // ─── PATCH /users/{id}/suspend ────────────────────────────────────────────
