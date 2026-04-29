@@ -1,5 +1,7 @@
 package mx.edu.cetys.software_quality_lab.users;
 
+import mx.edu.cetys.software_quality_lab.users.exceptions.InvalidUserDataException;
+import mx.edu.cetys.software_quality_lab.users.exceptions.UserNotFoundException;
 import mx.edu.cetys.software_quality_lab.validators.EmailValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +58,9 @@ public class UserService {
      */
     UserController.UserResponse suspendUser(Long id) {
         log.info("Suspendiendo usuario, id={}", id);
-        // TODO: buscar usuario, validar status, cambiar a SUSPENDED, guardar, mapear y regresar
-        throw new UnsupportedOperationException("TODO: implementar suspendUser");
+        var user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("User not found"));
+        if (user.getStatus() == UserStatus.SUSPENDED) throw new InvalidUserDataException("El usuario ya esta suspendido");
+        return mapToResponse(user);
     }
 
     private UserController.UserResponse mapToResponse(User user) {
