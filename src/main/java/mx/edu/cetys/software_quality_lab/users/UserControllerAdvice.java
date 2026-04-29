@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RestControllerAdvice
 public class UserControllerAdvice {
 
-    // TODO: regresar HTTP 400 cuando los datos del usuario son inválidos
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ApiResponse<Void> handleInvalidUserData(InvalidUserDataException ex) {
-        throw new UnsupportedOperationException("TODO: implementar handleInvalidUserData");
+        return new ApiResponse<>("Invalid request", null, ex.getMessage());
     }
 
     // TODO: regresar HTTP 404 cuando el usuario no se encuentra en BD
@@ -26,10 +25,9 @@ public class UserControllerAdvice {
         return new ApiResponse<>("User not found",null, ex.getMessage());
     }
 
-    // TODO: regresar HTTP 409 cuando el username ya está registrado
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     ApiResponse<Void> handleDuplicateUsername(DuplicateUsernameException ex) {
-        throw new UnsupportedOperationException("TODO: implementar handleDuplicateUsername");
+        return new ApiResponse<>("User already exists", null, ex.getMessage());
     }
 }

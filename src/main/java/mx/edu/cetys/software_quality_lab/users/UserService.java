@@ -1,10 +1,14 @@
 package mx.edu.cetys.software_quality_lab.users;
 
 import mx.edu.cetys.software_quality_lab.users.exceptions.UserNotFoundException;
+import mx.edu.cetys.software_quality_lab.users.exceptions.DuplicateUsernameException;
+import mx.edu.cetys.software_quality_lab.users.exceptions.InvalidUserDataException;
 import mx.edu.cetys.software_quality_lab.validators.EmailValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 @Service
 public class UserService {
@@ -17,6 +21,90 @@ public class UserService {
     public UserService(UserRepository userRepository, EmailValidatorService emailValidatorService) {
         this.userRepository = userRepository;
         this.emailValidatorService = emailValidatorService;
+    }
+
+
+    private boolean isValidRequest(UserController.UserRequest request)
+    {
+        // Username validations
+        String username = request.username();
+        if (username.isEmpty()) {
+            return false;
+        }
+
+        if (username.length() < 5 || username.length() > 20 ) {
+            return false;
+        }
+
+        if (!username.matches("[a-z0-9_]+") || username.startsWith("_") || username.endsWith("_")) {
+            return false;
+        }
+
+        // First name validations
+        String firstName = request.firstName();
+        if (firstName.isEmpty()) {
+            return false;
+        }
+
+        if (firstName.length() < 2 || firstName.length() > 50 ) {
+            return false;
+        }
+
+        if (!firstName.matches("[\\p{L}]+")) {
+            return false;
+        }
+
+        // Last name validations
+        String lastName = request.lastName();
+        if (lastName.isEmpty()) {
+            return false;
+        }
+
+        if (lastName.length() < 2 || lastName.length() > 50 ) {
+            return false;
+        }
+
+        if (!lastName.matches("[\\p{L}]+")) {
+            return false;
+        }
+
+        // Age validations
+        if (request.age() < 13 || request.age() > 120) {
+            return false;
+        }
+
+        // Phone validations
+        String phone = request.phone();
+        if (!phone.matches("\\d{10}")) {
+            return false;
+        }
+
+        // Email validation
+        return emailValidatorService.isValid(request.email());
+    }
+
+    private User userRequestMapper(UserController.UserRequest request) {
+        User user = new User();
+        user.setUsername(request.username());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        user.setPhone(request.phone());
+        user.setEmail(request.email());
+        user.setAge(request.age());
+
+        return user;
+    }
+
+    private UserController.UserResponse userResponseMapper (User user) {
+        return new UserController.UserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getPhone(),
+                user.getEmail(),
+                user.getAge(),
+                user.getStatus().toString());
     }
 
     /**
@@ -36,8 +124,20 @@ public class UserService {
      */
     UserController.UserResponse registerUser(UserController.UserRequest request) {
         log.info("Iniciando registro de usuario, username={}", request.username());
-        // TODO: implementar las reglas 1-7, luego guardar en BD y mapear la respuesta
-        throw new UnsupportedOperationException("TODO: implementar registerUser");
+
+        if (!isValidRequest(request)){
+            throw new InvalidUserDataException("Invalid request");
+        }
+
+        if (userRepository.existsByUsername(request.username())) {
+            throw new DuplicateUsernameException("User already exists");
+        }
+
+        User user = userRequestMapper(request);
+
+        var savedUser = userRepository.save(user);
+
+        return userResponseMapper(savedUser);
     }
 
     /**
@@ -79,8 +179,4 @@ public class UserService {
         throw new UnsupportedOperationException("TODO: implementar suspendUser");
     }
 
-    private UserController.UserResponse mapToResponse(User user) {
-        // TODO: mapear los campos de la Entity User al record UserController.UserResponse
-        throw new UnsupportedOperationException("TODO: implementar mapToResponse");
-    }
 }

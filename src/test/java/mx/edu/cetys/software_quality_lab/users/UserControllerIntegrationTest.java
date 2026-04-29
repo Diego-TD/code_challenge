@@ -38,22 +38,38 @@ public class UserControllerIntegrationTest {
                     "firstName": "Juan",
                     "lastName": "Pérez",
                     "phone": "6641234567",
-                    "email": "juan4#gmail.com",
+                    "email": "hola#gm4l.com",
                     "age": 25
                 }""";
 
-        // TODO: realizar POST /users con el body anterior
-        // TODO: andExpect status 201
-        // TODO: andExpect jsonPath("$.info") contiene "creado" o similar
-        // TODO: andExpect jsonPath("$.response.user.username") == "juan4_dev"
-        // TODO: andExpect jsonPath("$.response.user.status") == "ACTIVE"
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+        ).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.response.user.username").value("juan4_dev"))
+                .andExpect(jsonPath("$.response.user.firstName").value("Juan"))
+                .andExpect(jsonPath("$.response.user.lastName").value("Pérez"))
+                .andExpect(jsonPath("$.response.user.phone").value("6641234567"))
+                .andExpect(jsonPath("$.response.user.email").value("hola#gm4l.com"))
+                .andExpect(jsonPath("$.response.user.age").value(25))
+                .andExpect(jsonPath("$.response.user.status").value("ACTIVE"));
     }
 
     @Test
     void shouldReturn400WhenUsernameIsTooShort() throws Exception {
-        // TODO: body con username de 4 caracteres
-        // TODO: realizar POST /users
-        // TODO: andExpect status 400
+        String body = """
+                {
+                    "username": "juan",
+                    "firstName": "Juan",
+                    "lastName": "Pérez",
+                    "phone": "6641234567",
+                    "email": "hola#gm4l.com",
+                    "age": 25
+                }""";
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+        ).andExpect(status().isBadRequest());
     }
 
     @Test
