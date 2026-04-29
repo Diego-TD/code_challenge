@@ -25,15 +25,16 @@
 ## Parte 1 — Módulo `users`
 
 ### ¿Qué implementaron?
+Endpoint para crear usuarios, para obtener usuario por id, y para cambiar el estado de un usuario, sus implementaciones en el servicio, utilizando excepciones custom, y realizando unit e integration tests para cada endpoint para verificar su funcionamiento.
 
 <!-- Describan brevemente qué hicieron, dificultades que encontraron o decisiones que tomaron -->
 
 ### Cobertura obtenida
 
-| Métrica | Resultado |
-|---|-----------|
-| Line coverage | 87%       |
-| Branch coverage | 85%       |
+| Métrica | Resultado                                |
+|---|------------------------------------------|
+| Line coverage | 87%,  o 95% incluyendo integration tests | 
+| Branch coverage | 85%                                      |
 
 ---
 
