@@ -2,23 +2,23 @@
 
 ## Equipo
 
-**Nombre del equipo:** <!-- Nombre de su equipo -->
+**Nombre del equipo:** Harugos
 
 | Nombre completo | Matrícula |
-|---|---|
-| Estudiante 1 | 000000 |
-| Estudiante 2 | 000000 |
-| Estudiante 3 | 000000 |
+|-----------------|-----------|
+| Esteban         | e013818   |
+| Harumi Lopez    | e011461   |
+| Diego Torres    | e014021   |
 
 ---
 
 ## Entrega
 
-**Fecha:** <!-- Fecha de entrega -->
+**Fecha:** 28 de abril de 2026
 
-**Modalidad:** <!-- ZIP / GitHub -->
+**Modalidad:** GitHub
 
-**Link del repositorio (si aplica):** <!-- https://github.com/... -->
+**Link del repositorio (si aplica):** https://github.com/Diego-TD/code_challenge#
 
 ---
 
