@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -174,7 +176,14 @@ public class UserServiceTest {
 
     @Test
     void shouldThrowWhenSuspendingAlreadySuspendedUser() {
-        // TODO: mockear findById con un usuario SUSPENDED
-        // TODO: assertThrows InvalidUserDataException
+        //Arrange
+         var user = new User("junperez","Juan", "Perez", "1234567891","jusn#gmil.com",25);
+         user.setStatus(UserStatus.SUSPENDED);
+         when(userRepository.findById(10L)).thenReturn(Optional.of(user));
+
+         assertThrows(InvalidUserDataException.class, () -> userService.suspendUser(10L));
+         verify(userRepository,never()).save(any());
+
+
     }
 }
