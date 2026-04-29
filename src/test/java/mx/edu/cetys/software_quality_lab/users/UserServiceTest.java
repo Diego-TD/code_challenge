@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -41,9 +43,23 @@ public class UserServiceTest {
 
     @Test
     void shouldGetUserByIdSuccessfully() {
-        // TODO: arrange — mockear userRepository.findById para que regrese un Optional<User> con datos
-        // TODO: act — llamar a userService.getUserById(1L)
-        // TODO: assert — verificar que los campos del response coincidan con el mock
+        // arrange — mockear userRepository.findById para que regrese un Optional<User> con datos
+        Long userId = 1L;
+        User mockUser = new User("user1","Usu","Lopez","12345","email",8);
+        mockUser.setId(1L);
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.of(mockUser));
+
+        // act — llamar a userService.getUserById(1L)
+        UserController.UserResponse userResponse = userService.getUserById(userId);
+
+        // assert — verificar que los campos del response coincidan con el mock
+        assertEquals(mockUser.getUsername(), userResponse.username());
+        assertEquals(mockUser.getFirstName(), userResponse.firstName());
+        assertEquals(mockUser.getLastName(), userResponse.lastName());
+        assertEquals(mockUser.getEmail(), userResponse.email());
+        assertEquals(mockUser.getPhone(), userResponse.phone());
+        assertEquals(mockUser.getAge(), userResponse.age());
     }
 
     @Test
@@ -168,8 +184,15 @@ public class UserServiceTest {
 
     @Test
     void shouldThrowWhenUserNotFound() {
-        // TODO: mockear userRepository.findById para que regrese Optional.empty()
-        // TODO: assertThrows UserNotFoundException
+        // mockear userRepository.findById para que regrese Optional.empty()
+        Long userId = 1L;
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.empty());
+
+        // assertThrows UserNotFoundException
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.getUserById(userId);
+        });
     }
 
     @Test

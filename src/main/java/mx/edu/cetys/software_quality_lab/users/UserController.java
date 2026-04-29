@@ -1,6 +1,7 @@
 package mx.edu.cetys.software_quality_lab.users;
 
 import mx.edu.cetys.software_quality_lab.commons.ApiResponse;
+import mx.edu.cetys.software_quality_lab.pets.PetController;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK) // HTTP 200: solicitud exitosa
     ApiResponse<UserWrapper> getUserById(@PathVariable Long id) {
         // TODO: llamar a userService.getUserById, envolver en ApiResponse y regresar
-        throw new UnsupportedOperationException("TODO: implementar endpoint getUserById");
+        var user = userService.getUserById(id);
+        return new ApiResponse<>("User encontrado", new UserController.UserWrapper(user), null);
     }
 
     // PATCH /users/{id}/suspend — suspender un usuario activo

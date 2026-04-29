@@ -23,7 +23,7 @@ public class UserControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     ApiResponse<Void> handleUserNotFound(UserNotFoundException ex) {
-        throw new UnsupportedOperationException("TODO: implementar handleUserNotFound");
+        return new ApiResponse<>("User not found",null, ex.getMessage());
     }
 
     // TODO: regresar HTTP 409 cuando el username ya está registrado

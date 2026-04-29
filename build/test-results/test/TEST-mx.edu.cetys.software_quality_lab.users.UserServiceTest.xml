@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="mx.edu.cetys.software_quality_lab.users.UserServiceTest" tests="21" skipped="0" failures="0" errors="0" timestamp="2026-04-29T05:01:24.022Z" hostname="JARVIS" time="5.074">
+  <properties/>
+  <testcase name="shouldThrowWhenFirstNameContainsNumbers()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="4.606"/>
+  <testcase name="shouldThrowWhenPhoneHasWrongLength()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.013"/>
+  <testcase name="shouldGetUserByIdSuccessfully()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.189"/>
+  <testcase name="shouldThrowWhenAgeIsBelowTwelve()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.01"/>
+  <testcase name="shouldThrowWhenUsernameHasInvalidChars()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.011"/>
+  <testcase name="shouldRegisterUserSuccessfully()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.008"/>
+  <testcase name="shouldSuspendActiveUserSuccessfully()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.007"/>
+  <testcase name="shouldThrowWhenUsernameTooShort()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.009"/>
+  <testcase name="shouldThrowWhenLastNameTooShort()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.007"/>
+  <testcase name="shouldThrowWhenAgeExceedsMaximum()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.011"/>
+  <testcase name="shouldThrowWhenUsernameStartsWithUnderscore()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.009"/>
+  <testcase name="shouldThrowWhenSuspendingAlreadySuspendedUser()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.006"/>
+  <testcase name="shouldThrowWhenPhoneContainsLetters()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.008"/>
+  <testcase name="shouldThrowWhenUsernameTooLong()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.006"/>
+  <testcase name="shouldThrowWhenUsernameAlreadyExists()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.009"/>
+  <testcase name="shouldThrowWhenFirstNameTooShort()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.007"/>
+  <testcase name="shouldThrowWhenAgeIsExactlyTwelve()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.006"/>
+  <testcase name="shouldThrowWhenUserNotFound()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.015"/>
+  <testcase name="shouldThrowWhenEmailIsInvalid()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.008"/>
+  <testcase name="shouldThrowWhenUsernameEndsWithUnderscore()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.007"/>
+  <testcase name="shouldThrowWhenLastNameContainsNumbers()" classname="mx.edu.cetys.software_quality_lab.users.UserServiceTest" time="0.005"/>
+  <system-out><![CDATA[22:01:28.844 [Test worker] INFO mx.edu.cetys.software_quality_lab.users.UserService -- Finding user by ID, id=1
+22:01:29.069 [Test worker] INFO mx.edu.cetys.software_quality_lab.users.UserService -- Finding user by ID, id=1
+]]></system-out>
+  <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\harum\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.17.8\f09415827a71be7ed621c7bd02550678f28bc81c\byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>
