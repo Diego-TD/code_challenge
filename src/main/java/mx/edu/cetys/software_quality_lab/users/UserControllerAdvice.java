@@ -18,7 +18,6 @@ public class UserControllerAdvice {
         return new ApiResponse<>("Invalid request", null, ex.getMessage());
     }
 
-    // TODO: regresar HTTP 404 cuando el usuario no se encuentra en BD
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     ApiResponse<Void> handleUserNotFound(UserNotFoundException ex) {
