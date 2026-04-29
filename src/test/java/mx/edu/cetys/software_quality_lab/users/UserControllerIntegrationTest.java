@@ -198,10 +198,22 @@ public class UserControllerIntegrationTest {
 
     @Test
     void shouldSuspendUserAndReturn200() throws Exception {
-        // TODO: guardar un usuario ACTIVE via repository
-        // TODO: realizar PATCH /users/{id}/suspend
-        // TODO: andExpect status 200
-        // TODO: andExpect jsonPath("$.response.user.status") == "SUSPENDED"
+        User activeUser = new User(
+                "juan4_dev",
+                "Juan",
+                "Pérez",
+                "6641234567",
+                "hola#gm4l.com",
+                25);
+        activeUser.setStatus(UserStatus.ACTIVE);
+
+        User saved = userRepository.save(activeUser);
+
+        mockMvc.perform(patch("/users/"+saved.getId()+"/suspend")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.response.user.status").value("SUSPENDED"));
+
     }
 
     @Test
@@ -209,5 +221,21 @@ public class UserControllerIntegrationTest {
         // TODO: guardar un usuario con status SUSPENDED via repository
         // TODO: realizar PATCH /users/{id}/suspend
         // TODO: andExpect status 400
+
+        User suspendedUser = new User(
+                "juan4_dev",
+                "Juan",
+                "Pérez",
+                "6641234567",
+                "hola#gm4l.com",
+                25);
+        suspendedUser.setStatus(UserStatus.SUSPENDED);
+
+        User saved = userRepository.save(suspendedUser);
+
+        mockMvc.perform(patch("/users/"+saved.getId()+"/suspend")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isBadRequest());
+
     }
 }

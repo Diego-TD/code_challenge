@@ -29,12 +29,12 @@ Endpoint para crear usuarios, para obtener usuario por id, y para cambiar el est
 
 <!-- Describan brevemente qué hicieron, dificultades que encontraron o decisiones que tomaron -->
 
-### Cobertura obtenida
+### Cobertura obtenida (unit + integration tests)
 
-| Métrica | Resultado                                |
-|---|------------------------------------------|
-| Line coverage | 87%,  o 95% incluyendo integration tests | 
-| Branch coverage | 85%                                      |
+| Métrica | Resultado |
+|---|-----------|
+| Line coverage | 97%       | 
+| Branch coverage | 88%       |
 
 ---
 

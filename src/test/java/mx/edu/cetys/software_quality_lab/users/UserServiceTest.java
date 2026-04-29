@@ -97,9 +97,41 @@ public class UserServiceTest {
 
     @Test
     void shouldSuspendActiveUserSuccessfully() {
-        // TODO: arrange — mockear findById con un usuario ACTIVE
-        // TODO: act — llamar a userService.suspendUser(id)
-        // TODO: assert — verificar que el status regresado sea "SUSPENDED"; confirmar que save fue llamado
+        // arrange
+        Long id = 10L;
+        User activeUser = new User(
+                "juan4_dev",
+                "Juan",
+                "Pérez",
+                "6641234567",
+                "hola#gm4l.com",
+                25);
+        activeUser.setId(id);
+        activeUser.setStatus(UserStatus.ACTIVE);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(activeUser));
+
+        User suspendedUser = new User(
+                "juan4_dev",
+                "Juan",
+                "Pérez",
+                "6641234567",
+                "hola#gm4l.com",
+                25);
+        suspendedUser.setId(id);
+        suspendedUser.setStatus(UserStatus.SUSPENDED);
+
+        when(userRepository.save(any(User.class))).thenReturn(suspendedUser);
+
+        // act
+        UserController.UserResponse response = userService.suspendUser(id);
+
+        // assert
+        assertEquals("SUSPENDED", response.status());
+        verify(userRepository, times(1)).findById(id);
+        verify(userRepository, times(1)).save(any(User.class));
+
+
     }
 
     // ─── Validaciones de Username ─────────────────────────────────────────────
@@ -390,7 +422,7 @@ public class UserServiceTest {
         when(userRepository.findById(10L)).thenReturn(Optional.of(user));
 
         assertThrows(InvalidUserDataException.class, () -> userService.suspendUser(10L));
-        verify(userRepository,never()).save(any());
+        verify(userRepository,never()).save(any(User.class));
 
     }
 }

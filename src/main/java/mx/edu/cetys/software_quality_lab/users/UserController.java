@@ -32,7 +32,6 @@ public class UserController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK) // HTTP 200: solicitud exitosa
     ApiResponse<UserWrapper> getUserById(@PathVariable Long id) {
-        // TODO: llamar a userService.getUserById, envolver en ApiResponse y regresar
         var user = userService.getUserById(id);
         return new ApiResponse<>("User encontrado", new UserController.UserWrapper(user), null);
     }

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Locale;
 
 @Service
 public class UserService {
@@ -177,7 +176,11 @@ public class UserService {
         log.info("Suspendiendo usuario, id={}", id);
         var user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("User not found"));
         if (user.getStatus() == UserStatus.SUSPENDED) throw new InvalidUserDataException("El usuario ya esta suspendido");
-        return userResponseMapper(user);
+
+        user.setStatus(UserStatus.SUSPENDED);
+        User patched = userRepository.save(user);
+
+        return userResponseMapper(patched);
     }
 
 }
